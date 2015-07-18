@@ -1,0 +1,80 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+.navbar-brand1
+{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    margin: auto;
+    font-size: 200%;
+}
+
+
+/******************************
+******FollowerStream CSS*******
+*******************************/
+
+.changeMargin {
+	margin-bottom: 0px;
+	margin-top: 30px;
+}
+
+#eventDetails {
+	margin-top: 60px;
+
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.streamMap {
+	margin-bottom: 30px;
+	margin-top: 10px;
+	margin-right: 60px;
+	margin-left: 60px;
+}
+
+.eventHeader {
+	width: 100%;
+	margin-left: 0px;
+}
+
+/******************************
+******User Profile CSS*********
+*******************************/
+
+ #eventDetailsUP {
+ 	margin-top: 10px;
+ }
+
+.marginMod {
+ 	margin-top: 30px;
+ 	margin-left: 40px;
+ }
+
+/******************************
+******ProfilePage CSS**********
+*******************************/
+
+.marginBottom {
+	margin-bottom: 20px;
+}
+
+/******************************
+*********Search CSS************
+*******************************/
+
+.searchMap {
+	margin-bottom: 30px;
+	margin-top: 10px;
+	margin-right: 60px;
+	margin-left: 40px;
+}

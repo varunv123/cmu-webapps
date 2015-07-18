@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="jumbotron">
+    <div class="row">
+      <div class="col-md-3">
+        {% for user5 in users %}
+            {% if user5.socialaccount_set.all.0.provider %}
+            <a href="#" class="thumbnail">
+              <img src="{{user5.socialaccount_set.all.0.get_avatar_url}}" height="200" width="300" alt=""> 
+              </a>
+              {% else %}
+            <a href="#" class="thumbnail changeMargin">
+                  <img src="/slobbbyrobbby/get-image/{{user5.userprofile.id}}/{{user5.id}}" height="200" width="300" alt=""> 
+              </a>
+            {% endif %}
+            {% endfor %}
+            <div class="caption">
+              {% for user in users %}
+                <h3> {{ user.username }}</h3>
+                <h5> {{ user.email }} </h5>
+                <input id="useridno" value="{{user.id}}" type="hidden">
+              {% endfor %}
+            </div>
+            {% block addGroup %}{% endblock %}
+      </div>  
+      <div class="col-md-7">
+        <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-11">
+            <h1> {% block title %}{% endblock %} </h1>
+              {% block eventStream %} {% endblock %}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="row">
+          <form action="/slobbbyrobbby/search" method="get">
+            {% for field3 in searchForm.visible_fields %}
+              <div class="row">
+                  {{field3}}
+              </div>
+              <div class="row" style="color: red">
+                {{field3.errors}}
+              </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-default">Search</button>
+            {% csrf_token %}
+          </form>
+        </div>
+        <div class="row">
+          {% for err in searchFrom.non_field_errors %}
+            <p style="color: red">
+              {{err}}
+            </p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% for error in errors %}
+      <p style="color: red">
+        {{ error }}
+      </p>
+    {% endfor %}
+  </div>
+{% endblock %}

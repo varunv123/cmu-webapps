@@ -1,0 +1,3 @@
+web: gunicorn Team110Proj.wsgi --log-file -
+
+

@@ -1,0 +1,81 @@
+{% extends "stream.html" %}
+
+{% block title %}
+{{ groupName }}
+{% endblock %}
+
+{% block addGroup %}
+<div class="input-group">
+    <div class="col-md-12">
+      <form action="/slobbbyrobbby/add-group" method="post">
+        {% for field in groupForm.visible_fields %}
+          <div class="row">
+            <div class="col-md-4">
+              {{field.label}}
+            </div>
+            <div class="col-md-6">
+              {{field}}
+            </div>
+            <div class="col-md-2" style="color: red">
+              {{field.errors}}
+            </div>
+          </div>
+
+        {% endfor %}
+        <div class="row">
+          <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu{{event.id}}" data-toggle="dropdown" aria-expanded="true">
+              Invite Friend
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu{{event.id}}">
+              {% for u in followingUsers %}
+              <li role="presentation"><a role="menuitem" tabindex="-1" href="add-user-to-group/{{group.id}}/{{u.id}}">{{u.username}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% csrf_token %}
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block eventStream %}
+{% load easy_maps_tags %}
+  {% for event in events %}
+    <div class="row" id="eventrow{{event.id}}">
+        <div class="panel panel-default">
+          <div class="eventHeader row expand panel-heading">
+            <div class="col-md-3">
+              <!-- <a href="/slobbbyrobbby/userProfile/{{event.user.id}}" class="thumbnail"> -->
+                          {% if event.user.socialaccount_set.all.0.provider %}
+            <a href="#" class="thumbnail">
+              <img src="{{event.user.socialaccount_set.all.0.get_avatar_url}}" height="200" width="300" alt="eek!"> 
+              </a>
+              {% else %}
+            <a href="#" class="thumbnail changeMargin">
+                  <img src="/slobbbyrobbby/get-image/{{event.user.userprofile.id}}/{{event.user.id}}" height="200" width="300" alt=""> 
+              </a>
+            {% endif %}
+              <a href="/slobbbyrobbby/userProfile/{{event.user.id}}" class="thumbnail">
+                {{event.user.username}}
+              </a>
+            </div>
+            <div class="col-md-6">
+            <div class="row">
+              <ul id="eventDetails" style="list-style-type:none">
+                <li class="bold"> {{ event.location }} </li>
+                <li> {{ event.startDate}} {{ event.startTime}} </li>
+                <li> {{ event.endDate }} {{ event.endTime }} </li>
+              <!--   <li><button type="button" class="btn btn-default" data-toggle="collapse" data-target="#eventmap{{event.id}}">Show Map</button>
+                </li> -->
+              </ul>          
+            </div>
+            </div>
+          </div>
+          <div id="eventmap{{event.id}}" class="row panel-body searchMap"> {% easy_map event.location  450 300 using 'easy_maps/map.html'%} </div>
+        </div>
+      </div>
+  {% endfor %}
+{% endblock %}

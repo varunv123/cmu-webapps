@@ -1,0 +1,181 @@
+<!-- <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script> -->
+{% extends "base.html" %}
+{% block content %}
+{% load easy_maps_tags %}
+<!-- Varun Test Master -->
+  <div class="jumbotron">
+        <div class="row">
+          <div class="col-md-3">
+            {% for user5 in users %}
+            {% if user5.socialaccount_set.all.0.provider %}
+            <a href="#" class="thumbnail">
+              <img src="{{user5.socialaccount_set.all.0.get_avatar_url}}" height="200" width="300" alt="Generic placeholder thumbnail">
+              </a>
+              {% else %}
+            <a href="#" class="thumbnail">
+              <img src="/slobbbyrobbby/get-image/{{user5.userprofile.id}}/{{user5.id}}" height="200" width="300" alt="Generic placeholder thumbnail">
+            </a>
+            {% endif %}
+            
+            {% endfor %}
+            <div class="caption">
+              {% for user in users %}
+                <h3> New Event: </h3>
+                <input id="useridno" value="{{user.id}}" type="hidden">
+              {% endfor %}
+            </div>
+            <div class="input-group">
+              <div class="col-md-12">
+                <form action="/slobbbyrobbby/add-event" method="post">
+                  {% for field in eventForm.visible_fields %}
+                    <div class="row">
+                      <div class="col-md-4">
+                        {{field.label}}
+                      </div>
+                      <div class="col-md-6">
+                        {{field}}
+                      </div>
+                      <div class="col-md-2" style="color: red">
+                        {{field.errors}}
+                      </div>
+                    </div>
+
+                  {% endfor %}
+                  <button type="submit" class="btn btn-default">Create Event</button>
+                  {% csrf_token %}
+                </form>
+              </div>
+            </div>
+            {% for user1 in users %}
+            <div class="row"> 
+              <div class="col-md-6">
+                <h5> Following: </h5>
+              </div>
+              <div class="col-md-6">
+                {{user1.followers.all|length}}
+              </div>
+            </div>
+            <div class="row"> 
+              <div class="col-md-6">
+                <h5> Followers: </h5>
+              </div>
+              <div class="col-md-6">
+                <h5> {{user1.followees.all|length}} </h5>
+              </div>
+            </div>
+            {% endfor %}
+            <div class="row">
+              <div class="panel panel-default">
+                <div class="eventHeader row expand panel-heading">
+                   <div class="col-md-12">
+                    <h6> Invited events: </h6>
+                  </div>
+                </div>
+                <div class="row">
+                <div class="col-lg-100">
+                  {% for invited in invitedEvents %}
+                  <ul style="list-style-type:none">
+                    <h4> {{invited.user.username}} invited you to:</h4>
+                    <li class="bold"> {{ invited.getEventName }} </li>
+                    <li> {{ invited.startTime}} - {{ invited.endTime }} </li>
+                  </ul>
+                  {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>  
+          <div class="col-md-6">
+            {% for user in users %}
+              <h1> {{ user.username }}</h1>
+              <h3> {{ user.email }} </h3>
+            {% endfor %}
+            <h2> My Events </h2>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-11">
+                  {% for event in events %}
+                  <div class="row" id="ProfileEvent{{event.id}}">
+                  <div class="panel panel-default">
+                    <div class="eventHeader row expand panel-heading">
+                      <div class="col-md-6">
+                      <div class="row">
+                        <ul id="eventDetailsUP" style="list-style-type:none">
+                          <li class="bold"> {{ event.location }} </li>
+                          <li> {{ event.startDate}} {{ event.startTime}} </li>
+                          <li> {{ event.endDate }} {{ event.endTime }} </li>
+                        </ul>          
+                      </div>
+                      </div>
+                      <div class="col-md-3 col-md-offset-3">
+                      <div class="row">
+                        <p>
+                            <a class="btn btn-primary btn-md" role="button" href="/slobbbyrobbby/delete-event/{{event.id}}">Delete</a>
+                        </p>
+                      </div>
+                      <div class="row">
+                        <div class="dropdown">
+                          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu{{event.id}}" data-toggle="dropdown" aria-expanded="true">
+                            Invite Friend
+                            <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu{{event.id}}">
+                            {% for u in followingUsers %}
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="invite-user/{{event.id}}/{{u.id}}">{{u.username}}</a></li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                    <div id="eventmap{{event.id}}" class="row streamMap marginMod panel-body"> 
+                      {% easy_map event.location  370 300 using 'easy_maps/map.html' %}
+                    </div>
+                  </div>
+                </div>  
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <form action="/slobbbyrobbby/search" method="get" class="marginBottom">
+              {% for field3 in searchForm.visible_fields %}
+                <div class="row">
+                  <div class="col-md-6">
+                    {{field3}}
+                  </div>
+                  <div class="col-md-6" style="color: red">
+                    {{field3.errors}}
+                  </div>
+                </div>
+              {% endfor %}
+              <button type="submit" class="btn btn-default">Search</button>
+              {% csrf_token %}
+            </form>
+            {% for err in searchFrom.non_field_errors %}
+              <p style="color: red">
+                {{err}}
+              </p>
+            {% endfor %}
+            <div class="panel panel-default">
+              <div class="eventHeader row expand panel-heading">
+                 <div class="col-md-12">
+                  <h6> Overlapping follower events: </h6>
+                </div>
+              </div>
+              <div class="row">
+              <div class="col-lg-100">
+                {% for overlap in overlapEvents %}
+                <ul style="list-style-type:none">
+                  <h4> {{overlap.user.username}} will be at:</h4>
+                  <li class="bold"> {{ overlap.getEventName }} </li>
+                  <li> {{ overlap.startTime}} - {{ overlap.endTime }} </li>
+                </ul>
+                {% endfor %}
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+{% load easy_maps_tags %}
+  <div class="jumbotron">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="row">
+              {% for user6 in users %}
+              {% if user6.socialaccount_set.all.0.provider %}
+            <a href="#" class="thumbnail">
+              <img src="{{user6.socialaccount_set.all.0.get_avatar_url}}" height="200" width="300" alt="Generic placeholder thumbnaill">
+              </a>
+              {% else %}
+            <a href="#" class="thumbnail">
+              <img src="/slobbbyrobbby/get-image/{{user6.userprofile.id}}/{{user6.id}}" height="200" width="300" alt="Generic placeholder thumbnail">
+            </a>
+            {% endif %}
+              {% endfor %}
+            </div>
+            <div class="row">
+              <div class="caption">
+                {% for user in users %}
+                  <h3> {{ user.username }}</h3>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="row">
+              {% for user in users %}
+                <div class="row">
+                  {% if following %}
+                    <form action="/slobbbyrobbby/unfollow/{{user.id}}" method="post">
+                      <button type="submit" class="btn btn-default">UnFollow</button>
+                        {% csrf_token %}
+                    </form>
+                  {% else %}
+                    <form action="/slobbbyrobbby/follow/{{user.id}}" method="post">
+                      <button type="submit" class="btn btn-default">Follow</button>
+                        {% csrf_token %}
+                    </form>
+                  {% endif %}
+                </div>
+                <div class="row">
+                  {% if blocked %}
+                  <p>
+                      <a class="btn btn-primary btn-md" role="button" href="/slobbbyrobbby/unblock-user/{{user.id}}">UnBlock</a>
+                  </p>
+                  {% else %}
+                  <p>
+                      <a class="btn btn-primary btn-md" role="button" href="/slobbbyrobbby/block-user/{{user.id}}">Block</a>
+                  </p>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+            {% for user1 in users %}
+            <div class="row"> 
+              <div class="col-md-6">
+                <h5> Following: </h5>
+              </div>
+              <div class="col-md-6">
+                {{user1.followers.all|length}}
+              </div>
+            </div>
+            <div class="row"> 
+              <div class="col-md-6">
+                <h5> Followers: </h5>
+              </div>
+              <div class="col-md-6">
+                <h5> {{user1.followees.all|length}} </h5>
+              </div>
+            </div>
+            {% endfor %}
+          </div>  
+          <div class="col-md-7">
+            {% for user in users %}
+              <h1> {{ user.username }}</h1>
+              <h3> {{ user.email }} </h3>
+            <h2> {{user.username}}'s Stream </h2>
+            {% endfor %}
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-11">
+                  {% for event in events %}
+                <div class="row" id="eventrow{{event.id}}">
+                  <div class="panel panel-default">
+                    <div class="eventHeader row expand panel-heading">
+                      <div class="col-md-6">
+                      <div class="row">
+                        <ul id="eventDetailsUP" style="list-style-type:none">
+                          <li class="bold"> {{ event.location }} </li>
+                          <li> {{ event.startDate}} {{ event.startTime}} </li>
+                          <li> {{ event.endDate }} {{ event.endTime }} </li>
+                        </ul>          
+                      </div>
+                      </div>
+                    </div>
+                    <div id="eventmap{{event.id}}" class="row streamMap marginMod panel-body"> {% easy_map event.location  450 300 using 'easy_maps/map.html'%} </div>
+                  </div>
+                </div>
+                  {% endfor %}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <form action="/slobbbyrobbby/search" method="get">
+              {% for field3 in searchForm.visible_fields %}
+                <div class="row">
+                  <div class="col-md-6">
+                    {{field3}}
+                  </div>
+                  <div class="col-md-6" style="color: red">
+                    {{field3.errors}}
+                  </div>
+                </div>
+              {% endfor %}
+              <button type="submit" class="btn btn-default">Search</button>
+              {% csrf_token %}
+            </form>
+            {% for err in searchFrom.non_field_errors %}
+              <p style="color: red">
+                {{err}}
+              </p>
+            {% endfor %}
+            <div class="row">
+              {% for user2 in users %}
+                <div class="row">
+                  <div class="col-md-1"></div>
+                    <div class="col-md-11">
+                      <h5> Following: </h5>
+                    </div>
+                </div>
+                {% for follow1 in user2.followers.all %}
+                  <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-9">
+                      <h4> {{follow1.followee}} </h4>
+                    </div>
+                  </div>
+                {% endfor %}
+              {% endfor%}
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}
